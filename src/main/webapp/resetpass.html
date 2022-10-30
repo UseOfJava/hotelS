@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link href="//fonts.googleapis.com/css?family=Poiret+One&amp;subset=cyrillic,latin-ext" rel="stylesheet">
+    <link href="lib/moban/css/style.css" rel='stylesheet' type='text/css' media="all" />
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <style type="text/css">
+        .content {
+            border: 1px solid #3F3F3F;
+            width: 400px;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 0px;
+            /*background: white;*/
+        }
+        .aaa{
+            font-family: 华文行楷,serif;
+            font-weight: bolder;
+            font-size: large;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+<div class="content1 content" >
+    <form>
+    <div class="layui-form" lay-filter="resetpassform">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font class="aaa">原密码</font></label>
+            <div class="layui-input-inline">
+                <input type="text" placeholder="原密码" name="login_pass"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font class="aaa">新密码</font></label>
+            <div class="layui-input-inline">
+                <input type="password" placeholder="新密码" name="new_pass"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font class="aaa">确认密码</font></label>
+            <div class="layui-input-inline">
+                <input type="password" placeholder="确认密码" name="confirm_pass"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn" id="resetpass" lay-submit="resetpass" lay-filter="resetpass">保存</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+
+<script src="lib/layui/layui.all.js"></script>
+<script src="lib/layui/js/layuibase.js"></script>
+<script type="text/javascript">
+    // 点击按钮验证密码，并提交
+    form.on("submit(resetpass)",function (data) {
+        /*当表单内容验证成功后触发此方法*/
+        $.ajax({
+            url:'staff/resetpass',
+            data:data.field,
+            success:function (result) {
+                // console.log(result);
+                if (!result){
+                    layer.msg("重置密码失败！",{icon:2,time:5000});
+                }
+                else{
+                    top.location.href='login.html';
+                }
+            }
+        });
+
+    });
+</script>
+
+
+</body>
+</html>

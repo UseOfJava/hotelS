@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>小欢喜酒店管理系统</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+
+    <link href="lib/layui/images/iocn/favicon.ico">
+    <link href="lib/moban3007/css/style.css" rel='stylesheet' type='text/css'/>
+    <link href="//fonts.googleapis.com/css?family=Poiret+One&amp;subset=cyrillic,latin-ext" rel="stylesheet">
+
+</head>
+
+<body>
+<h1>欢迎使用小欢喜酒店管理系统</h1>
+<div class="w3ls-login box box--big">
+    <!-- START <form> -->
+    <form>
+        <div class="agile-field-txt">
+            <label> 账号</label>
+            <input type="text" name="Login_name" value="admin" placeholder="请输入账号" required="">
+        </div>
+        <div class="agile-field-txt">
+            <label> 密码</label>
+            <input type="password" name="Login_pass" value="admin" placeholder="请输入登录密码" required="" id="myInput">
+            <div class="agile_label">
+                <input id="check3" name="check3" type="checkbox" value="show password" onclick="myFunction()">
+                <label class="check" for="check3">显示密码</label>
+            </div>
+            <div class="agile-right">
+                <a href="#">忘记密码？</a>
+            </div>
+        </div>
+        <!-- START 显示密码 -->
+        <script>
+            function myFunction() {
+                let x = document.getElementById("myInput");
+                if (x.type === "password") {
+                    x.type = "text";
+                } else {
+                    x.type = "password";
+                }
+            }
+        </script>
+        <!-- END 显示密码 -->
+        <!-- START 持续登录 -->
+        <div class="w3ls-bot">
+            <div class="switch-agileits">
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                    保持登录状态
+                </label>
+            </div>
+        </div>
+        <!-- END 持续登录 -->
+        <input type="submit" id="loginbtn" value="登录">
+    </form>
+</div>
+<!-- END <form> -->
+<!--START 版权所有-->
+<div class="copy-wthree">
+    <p>© 2022 . 山东农业大学版权所有 | Darling、达</p>
+</div>
+<!--END 版权所有-->
+<script>
+    addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    }
+</script>
+
+<!--	登录提交数据-->
+<script type="text/javascript" src="lib/layui/layui.all.js"></script>
+<script type="text/javascript">
+    let $ = layui.$;
+    let layer = layui.layer;
+
+
+    $("#loginbtn").click(function () {
+        //console.
+        let formdata = {};//js对象------准备提交的数据
+        let name = $("[name='Login_name']").val();
+        let pass = $("[name='Login_pass']").val();
+        // 字符串的语法规则   --->正则表达式
+        let reg = /^\w{4,16}$/;
+        // console.log(name,pass,reg.test(name));
+        // 验证数据
+        if (reg.test(name) && reg.test(pass)) {
+            // 准备数据  提交数据
+            formdata = {
+                'Login_name': name,
+                Login_pass: pass
+            }
+            /*登录验证*/
+            $.ajax({
+                url: 'dologin',
+                data: formdata,
+                success: function (result) {
+                    // result是后台处理完成后返回给前台的json对象
+                    console.log(result);
+                    if (result) {
+                        /*登录日志*/
+                        $.ajax({
+                            url: 'loginlog/add',
+                            data: {login_name: name}
+                        });
+                        // 登陆成功（跳转到主页面）
+                        top.location.href = "main.html";
+                    } else {
+                        // 提示登录失败
+                        layer.msg("账号或密码错误，请重新登录", {
+                            icon: 2,
+                            time: 5000
+                        });
+                    }
+                }
+            });
+        } else {
+            // 提示重新填写
+            layer.msg("账号或密码填写不规范，账号和密码必须是4-16位数字、字母或下划线", {
+                icon: 2,
+                time: 5000
+            });
+        }
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.dao.IOrderDao">
+
+    <resultMap id="orderinfo" type="order">
+        <id column="id" property="id"/>
+        <result column="room_id" property="room_id"/>
+        <result column="vip_id" property="vip_id"/>
+        <result column="start_time" property="start_time"/>
+        <result column="check_out_time" property="check_out_time"/>
+        <result column="stay_days" property="stay_days"/>
+        <result column="state" property="state"/>
+        <result column="money" property="money"/>
+        <collection property="orderInfos" select="orderinfoslist" column="id"/>
+    </resultMap>
+
+    <!--    查询包含当前时间后30天内的订单信息-->
+    <select id="getRoomOrder" resultMap="orderinfo">
+        select distinct a.* from
+        (select * from t_order where room_id = #{room_id}) a
+        right join
+        (select * from t_order_info where check_in_date >= curdate() ) b
+        on a.id = b.order_id;
+    </select>
+
+    <select id="orderinfoslist" resultType="orderinfo">
+        select * from t_order_info
+        where order_id = #{id}
+    </select>
+
+
+    <select id="incomeDay" resultType="map">
+        select a.start_time,sum(a.money) as money from
+        (select DATE_FORMAT(start_time,'%Y-%m-%d') as start_time,money from t_order)
+        as a group by a.start_time order by a.start_time
+    </select>
+
+    <select id="incomeMonth" resultType="map">
+        select a.start_time,sum(a.money) as money from
+        (select DATE_FORMAT(start_time,'%Y-%m') as start_time,money from t_order)
+        as a group by a.start_time order by a.start_time
+    </select>
+
+    <select id="incomeYear" resultType="map">
+        select a.start_time,sum(a.money) as money from
+        (select DATE_FORMAT(start_time,'%Y') as start_time,money from t_order)
+        as a group by a.start_time order by a.start_time
+    </select>
+
+    <select id="vipconsume" resultType="map">
+        select distinct v.`name` vname,o.vip_id, sum(money) money from
+        t_vip v right join t_order o on v.id = vip_id
+        group by vip_id
+    </select>
+
+    <select id="roomincome" resultType="map">
+        select r.`code` r_name,o.room_id,sum(money) money from
+        t_order o left join t_room r on o.room_id = r.id
+        group by room_id order by r.code
+    </select>
+
+
+</mapper>

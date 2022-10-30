@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>员工管理</title>
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+</head>
+<body>
+<!-- 开始   数据表格  -->
+<table class="layui-table"
+       lay-data="{height: 'full', url:'staff/list',page:true, id:'datalist', toolbar:'#top_toolbar', escape: true}"
+       lay-filter="datalist">
+    <thead>
+    <tr>
+        <th lay-data="{type:'checkbox',fixed:'left'}"></th>
+        <th lay-data="{field:'login_name',sort:true}">账号</th>
+        <th lay-data="{field:'name',sort:true,edit:'text'}">姓名</th>
+        <th lay-data="{templet:'#sex_text'}">性别</th>
+        <th lay-data="{field:'age',sort:true,style:'color:#08e8de'}">入职年龄</th>
+        <th lay-data="{templet:'#state_text'}">状态</th>
+        <th lay-data="{toolbar:'#line_toolbar'}">操作</th>
+    </tr>
+    </thead>
+</table>
+<!-- 结束   数据表格  -->
+<!-- 开始   新增窗口  -->
+<div id="staff_addwindow" style="display:none;" class="layui-form" lay-filter="staff_addwindow">
+    <form id="staff_addform">
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号</label>
+            <div class="layui-input-inline">
+                <input type="text" lay-verify="required|login_item|norepeat" name="login_name" class="layui-input"
+                       placeholder="请输入账号">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" lay-verify="required" name="name" class="layui-input" placeholder="请输入姓名">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-inline">
+                <label><input type="radio" name="sex" value="0" lay-filter="sex">女</label>
+                <label><input type="radio" name="sex" value="1" lay-filter="sex">男</label>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">入职年龄</label>
+            <div class="layui-input-inline">
+                <input type="text" lay-verify="required" name="age" class="layui-input" placeholder="请输入工龄">
+            </div>
+        </div>
+    </form>
+</div>
+<!-- 结束   新增窗口  -->
+<!-- 开始   编辑窗口  -->
+<div id="staff_editwindow" style="display:none;" class="layui-form" lay-filter="staff_editwindow">
+    <input type="hidden" name="id">
+    <!--	账号不可修改-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-inline">
+            <input type="text" disabled name="login_name" class="layui-input" placeholder="请输入账号">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input type="text" lay-verify="required" name="name" class="layui-input" placeholder="请输入姓名">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-inline">
+            <label><input type="radio" name="sex" value="0" lay-filter="sex" disabled>女</label>
+            <label><input type="radio" name="sex" value="1" lay-filter="sex" disabled>男</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">入职年龄</label>
+        <div class="layui-input-inline">
+            <input type="text" name="age" class="layui-input" placeholder="请输入工龄">
+        </div>
+    </div>
+</div>
+<!-- 结束   编辑窗口  -->
+<!-- 开始   数据表格状态列文本  -->
+<script type="text/html" id="state_text">
+    {{#  if(d.state == 0){ }}
+    <span style='color:#37ff00'>可登录</span>
+    {{#  } else { }}
+    <span style='color:#ec1111'>已离职</span>
+    {{#  } }}
+</script>
+<script type="text/html" id="sex_text">
+    {{#  if(d.sex == 0){ }}
+    <span style='color: deeppink'>女</span>
+    {{#  } else { }}
+    <span style='color: blue'>男</span>
+    {{#  } }}
+</script>
+<!-- 结束   数据表格状态列文本  -->
+<!-- 开始   头部工具栏  -->
+<!-- 
+<button class="layui-btn layui-btn layui-bg-yellow"
+ lay-event="add">添加</button> 
+ -->
+<script type="text/html" id="top_toolbar">
+    <div class="layui-input-inline">
+        <input type="text" name="check" class="layui-input" placeholder="查询">
+    </div>
+    <button class="layui-btn layui-btn" lay-event="check" style="background-color:#fc8eac">查询</button>
+    <button class="layui-btn layui-btn" lay-event="add" style="background-color:#00ced1">添加</button>
+</script>
+<!-- 结束   头部工具栏  -->
+<!-- 开始   行内工具栏  -->
+<script type="text/html" id="line_toolbar">
+    {{#  if(d.state == 0){ }}
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="kill" style="background-color:#ac17d5">开除</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="del" style="background-color:#d70a53">删除</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="recover" style="background-color:#d4a916">恢复</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="del" style="background-color:#d70a53">删除</a>
+    {{#  } }}
+</script>
+<!-- 结束   行内工具栏  -->
+<script src="lib/layui/layui.all.js"></script>
+<!-- 声明layui需要的对象 -->
+<script src="lib/layui/js/layuibase.js"></script>
+<script src="lib/layui/js/staff.js"></script>
+<!-- 开始   单元格内修改 -->
+<script>
+    layui.use(['table', 'util'], function () {
+        let table = layui.table;
+        let util = layui.util;
+        table.on('edit(datalist)', function (obj) {
+            let value = obj.value;  //得到修改后的值
+            let data = obj.data;    //得到所在行所有键值
+            data.name = util.escape(value);
+            $.ajax({
+                url: 'staff/edit',
+                data: data,
+                success: function (result) {
+                    console.log(result);
+                    layer.msg("数据保存成功", {icon: 1, time: 2000});
+                }
+            });
+        });
+    });
+</script>
+<!-- 结束   单元格内修改 -->
+</body>
+</html>

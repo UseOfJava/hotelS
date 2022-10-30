@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.dao.IVipDao">
+    <!-- 查询 -->
+    <!-- resultType -->
+    <select id="getAll" resultType="VIP">
+        select * from t_vip
+        <!-- 动态Sql  [<where></where>] -->
+        <where>
+            <if test="check_text != null">
+                name like '%${check_text}%'
+                or tel like '%${check_text}%'
+            </if>
+        </where>
+        <!-- 动态Sql  [<if></if>] -->
+        <if test="start != null">
+            limit ${start},${limit}
+        </if>
+    </select>
+    <!-- 获取数量(查询分页) -->
+    <select id="getCount" resultType="int">
+        select count(*) from t_vip
+        <!-- 动态Sql  [<where></where>] -->
+        <where>
+            <if test="check_text != null">
+                name like '%${check_text}%'
+                or tel like '%${check_text}%'
+            </if>
+        </where>
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delVIP">
+		delete from t_vip
+		where id = #{id}
+	</delete>
+
+    <!-- 添加 -->
+    <insert id="addVIP">
+		insert into t_vip(name,age,tel,create_time,state)
+		values (#{name},#{age},#{tel},#{create_time},0)
+	</insert>
+
+
+    <!--	编辑（修改）-->
+    <update id="editVIP">
+		update t_vip set name = #{name}, age = #{age}, tel = #{tel}
+		where id = #{id}
+	</update>
+
+
+    <!--	注销-->
+    <update id="kill">
+		update t_vip set state = 1
+		where id = #{id}
+	</update>
+
+    <!--	恢复-->
+    <update id="recover">
+		update t_vip set state = 0
+		where id = #{id}
+	</update>
+
+
+</mapper>

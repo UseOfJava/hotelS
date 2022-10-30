@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>VIP管理</title>
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+</head>
+<body>
+<!-- 开始   数据表格  -->
+    <table class="layui-table"
+       lay-data="{url:'vip/list', page:true, id:'datalist', toolbar:'#top_toolbar'}"
+       lay-filter="datalist">
+        <thead>
+        <tr>
+            <th lay-data="{type:'checkbox',fixed:'left'}"></th>
+            <th lay-data="{field:'name',sort:true}">姓名</th>
+            <th lay-data="{field:'age',sort:true,style:'color:#08e8de'}">注册年龄</th>
+            <th lay-data="{field:'tel'}">联系方式</th>
+            <th lay-data="{field:'create_time',sort:true}">入住时间</th>
+            <th lay-data="{templet:'#state_text'}">状态</th>
+            <th lay-data="{toolbar:'#line_toolbar'}">操作</th>
+        </tr>
+        </thead>
+    </table>
+<!-- 结束   数据表格  -->
+<!-- 开始   新增窗口  -->
+<div id="vip_addwindow" style="display:none;" class="layui-form" lay-filter="vip_addwindow">
+    <form id="vip_addform">
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" lay-verify="required" name="name" class="layui-input" placeholder="请输入姓名">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-inline">
+                <input type="number" lay-verify="required|vip_age"  name="age" class="layui-input" placeholder="请输入年龄">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系方式</label>
+            <div class="layui-input-inline">
+                <input type="tel" autocomplete="off" lay-verify="required|vip_phone" name="tel" class="layui-input" placeholder="请输入联系方式">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">入住时间</label>
+            <div class="layui-input-inline">
+                <input type="text" id="time" name="create_time" class="layui-input" placeholder="yyyy-MM-dd HH:mm:ss">
+                <i class="layui-icon Date_icon">&#xe637;</i>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- 结束   新增窗口  -->
+<!-- 开始   编辑窗口  -->
+<div id="vip_editwindow" style="display:none;" class="layui-form" lay-filter="vip_editwindow">
+    <input type="hidden" name="id">
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input type="text" lay-verify="required" name="name" class="layui-input" placeholder="请输入姓名">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-inline">
+            <input type="number" lay-verify="required|vip_age" name="age" class="layui-input" placeholder="请输入年龄">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系方式</label>
+        <div class="layui-input-inline">
+            <input type="tel" autocomplete="off" lay-verify="required|vip_phone" name="tel" class="layui-input" placeholder="请输入联系方式">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">入住时间</label>
+        <div class="layui-input-inline">
+            <input type="text" id="data" name="create_time" class="layui-input" placeholder="请输入入住时间">
+        </div>
+    </div>
+</div>
+<!-- 结束   编辑窗口  -->
+<!-- 开始   数据表格状态列文本  -->
+<script type="text/html" id="state_text">
+    {{#  if(d.state == 0){ }}
+    <span style='color:#37ff00'>正常使用</span>
+    {{#  } else { }}
+    <span style='color:#ec1111'>已过期</span>
+    {{#  } }}
+</script>
+<!-- 结束   数据表格状态列文本  -->
+<!-- 开始   头部工具栏  -->
+<!--
+<button class="layui-btn layui-btn layui-bg-yellow"
+ lay-event="add">添加</button>
+ -->
+<script type="text/html" id="top_toolbar">
+    <div class="layui-input-inline">
+        <input type="text" name="check" class="layui-input" placeholder="查询">
+    </div>
+    <button class="layui-btn layui-btn" lay-event="check" style="background-color:#fc8eac">查询</button>
+    <button class="layui-btn layui-btn" lay-event="add" style="background-color:#00ced1">添加</button>
+    <button class="layui-btn layui-btn" lay-even="delmore"><i class="layui-icon"></i>批量删除</button>
+</script>
+<!-- 结束   头部工具栏  -->
+<!-- 开始   行内工具栏  -->
+<script type="text/html" id="line_toolbar">
+    {{#  if(d.state == 0){ }}
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="kill" style="background-color:#ac17d5">注销</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="del" style="background-color:#d70a53">删除</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="recover" style="background-color:#d4a916">恢复</a>
+    <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="del" style="background-color:#d70a53">删除</a>
+    {{#  } }}
+</script>
+<!-- 结束   行内工具栏  -->
+
+<script src="lib/layui/layui.all.js"></script>
+<!-- 声明layui需要的对象 -->
+<script src="lib/layui/js/layuibase.js"></script>
+<script src="lib/layui/js/vip.js"></script>
+<script>
+    layui.use('laydate', function(){
+        let laydate = layui.laydate;
+        laydate.render({
+            elem:'#time',
+            type: 'datetime'
+        });
+    });
+</script>
+<script>
+    layui.use('laydate', function(){
+        let laydate = layui.laydate;
+        laydate.render({
+            elem:'#data',
+            type:'datetime'
+        });
+    });
+</script>
+</body>
+</html>

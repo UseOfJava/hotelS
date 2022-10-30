@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdau.dao.IRoomDao">
+
+    <!-- 查询 -->
+    <!-- resultType -->
+    <select id="getAll" resultType="room">
+        select * from t_room
+        <!-- 动态Sql  [<where></where>] -->
+        <where>
+            <if test="check_text != null">
+                code like '%${check_text}%'
+            </if>
+        </where>
+        <!-- 动态Sql  [<if></if>] -->
+        <if test="start != null">
+            limit ${start},${limit}
+        </if>
+    </select>
+    <!-- 获取数量(查询分页) -->
+    <select id="getCount" resultType="int">
+        select count(*) from t_room
+        <!-- 动态Sql  [<where></where>] -->
+        <where>
+            <if test="check_text != null">
+                code like '%${check_text}%'
+            </if>
+        </where>
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delRoom">
+		delete from t_room
+		where id = #{id}
+	</delete>
+
+    <!-- 添加 -->
+    <insert id="addRoom">
+		insert into t_room(code,state)
+		values (#{code},0)
+	</insert>
+
+
+    <!--	编辑（修改）-->
+    <update id="editRoom">
+		update t_room set code = #{code}, state = #{state}
+		where id = #{id}
+	</update>
+
+<!--    核验房间号是否重复-->
+    <select id="roomCodeRepeat" resultType="int">
+        select count(*) from t_room
+	    where code = #{code}
+    </select>
+
+</mapper>

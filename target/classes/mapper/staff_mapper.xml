@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sdau.dao.IStaffDao">
+
+    <!-- 登录 -->
+    <select id="getStaffByName" resultType="staff">
+		select * from t_staff 
+		where login_name = #{Login_name} and state = 0
+	</select>
+
+    <!-- 查询 -->
+    <!-- resultType -->
+    <select id="getAll" resultType="staff">
+        select id,name,login_name,age,state,sex from t_staff
+        <!-- 动态Sql  [<where></where>] -->
+        <where>
+            <if test="check_text != null">
+                login_name like '%${check_text}%'
+                or name like '%${check_text}%'
+                or age like '%${check_text}%'
+            </if>
+        </where>
+        <!-- 动态Sql  [<if></if>] -->
+        <if test="start != null">
+            limit ${start},${limit}
+        </if>
+    </select>
+    <!-- 获取数量(查询分页) -->
+    <select id="getCount" resultType="int">
+        select count(*) from t_staff
+        <!-- 动态Sql  [<where></where>] -->
+        <where>
+            <if test="check_text != null">
+                login_name like '%${check_text}%'
+                or name like '%${check_text}%'
+                or age like '%${check_text}%'
+            </if>
+        </where>
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delStaff">
+		delete from t_staff 
+		where id = #{id}
+	</delete>
+
+    <!-- 添加 -->
+    <insert id="addStaff">
+		insert into t_staff(login_name,login_pass,name,state,age,sex)
+		values (#{login_name},#{login_pass},#{name},0,#{age},#{sex})
+	</insert>
+
+    <!--	核验账号是否重复-->
+    <select id="getCountByLoginName" resultType='int'>
+	select count(*) from t_staff
+	where login_name = #{login_name} and state = 0
+	</select>
+
+    <!--	编辑（修改）-->
+    <update id="editStaff">
+		update t_staff set name = #{name}, age = #{age}, sex = #{sex}
+		where id = #{id}
+	</update>
+
+    <!--	开除-->
+    <update id="kill">
+		update t_staff set state = 1
+		where id = #{id}
+	</update>
+
+    <!--	恢复-->
+    <update id="recover">
+		update t_staff set state = 0
+		where id = #{id}
+	</update>
+
+    <!--修改密码-->
+    <update id="resetpass">
+		update t_staff set login_pass = #{login_pass}
+		where id = #{id}
+	</update>
+
+</mapper>
